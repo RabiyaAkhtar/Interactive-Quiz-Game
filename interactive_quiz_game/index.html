@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="quiz-container">
+        <h1>Quiz Game</h1>
+        <div id="question-container">
+            <p id="question-text"></p>
+            <ul id="choices-list"></ul>
+        </div>
+        <button id="submit-button">Submit</button>
+        <p id="feedback-text"></p>
+    </div>
+
+    <!-- <script src="script.js"></script> -->
+    <script>
+        const questions = [
+    'What is the national language of Pakistan?\nA. English\nB. Urdu\nC. Persian\nD. Hebrew',
+    'Which is the largest country in the world?\nA. Russia\nB. China\nC. Turkey\nD. USA',
+    'Where is Niagara falls located?\nA. USA\nB. Canada\nC. Germany\nD. Both A and B',
+    'What is the national animal of Pakistan?\nA. Chakor\nB. Horse\nC. Peacock\nD. Markhor',
+    'In which year did World War 1 start?\nA. 1920\nB. 1918\nC. 1914\nD. 1916'
+];
+
+const correctAnswers = ['B', 'A', 'D', 'D', 'C'];
+
+let currentQuestionIndex = 0;
+let score = 0;
+let selectedAnswer = null;
+
+const questionText = document.getElementById('question-text');
+const choicesList = document.getElementById('choices-list');
+const submitButton = document.getElementById('submit-button');
+const feedbackText = document.getElementById('feedback-text');
+
+function loadQuestion() {
+    const currentQuestion = questions[currentQuestionIndex];
+    const choices = currentQuestion.split('\n').slice(1); // Extract choices from question text
+
+    questionText.textContent = currentQuestion.split('\n')[0];
+    choicesList.innerHTML = '';
+    feedbackText.textContent = '';
+    selectedAnswer = null;
+
+    choices.forEach((choice, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = choice;
+        listItem.classList.add('choice-item');
+        listItem.addEventListener('click', () => selectAnswer(index, listItem));
+        choicesList.appendChild(listItem);
+    });
+}
+
+function selectAnswer(index, listItem) {
+    // Remove highlight from all choices
+    const choiceItems = document.querySelectorAll('.choice-item');
+    choiceItems.forEach(item => item.classList.remove('selected'));
+
+    // Highlight the selected choice
+    listItem.classList.add('selected');
+    selectedAnswer = String.fromCharCode(65 + index);
+}
+
+function submitAnswer() {
+    if (selectedAnswer === null) {
+        feedbackText.textContent = 'Please select an answer.';
+        return;
+    }
+
+    if (selectedAnswer === correctAnswers[currentQuestionIndex]) {
+        score++;
+        feedbackText.textContent = 'Correct!';
+    } else {
+        feedbackText.textContent = 'Wrong!';
+    }
+
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+    } else {
+        endQuiz();
+    }
+}
+
+function endQuiz() {
+    questionText.textContent = 'Quiz completed!';
+    choicesList.innerHTML = '';
+    // submitButton.disabled = true;
+    feedbackText.textContent = `Your final score is ${score}/${questions.length}.`;
+    submitButton.style.display = 'none'; // Hide the submit button
+}
+
+submitButton.addEventListener('click', submitAnswer);
+
+loadQuestion();
+
+    </script>
+</body>
+</html>
